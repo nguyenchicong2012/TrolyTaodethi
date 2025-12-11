@@ -10,7 +10,7 @@ from docx.shared import Pt, RGBColor, Inches, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 # --- 1. CẤU HÌNH TRANG ---
-st.set_page_config(page_title="Trợ lý Giáo án NLS", page_icon="📘", layout="centered")
+st.set_page_config(page_title="Trợ lý Tạo đề thi", page_icon="📘", layout="centered")
 
 FILE_KHUNG_NANG_LUC = "khungnanglucso.pdf"
 
@@ -32,7 +32,7 @@ def add_formatted_text(paragraph, text):
         run.font.name = 'Times New Roman'
         run.font.size = Pt(14)
 
-def create_doc_stable(content, ten_bai, lop):
+def create_doc_stable(content, ten_mon, lop, bo_sach, hoc_ki):
     doc = Document()
     
     # [CẤU HÌNH KHỔ GIẤY A4 VÀ LỀ CHUẨN NĐ30]
@@ -51,7 +51,7 @@ def create_doc_stable(content, ten_bai, lop):
     style.paragraph_format.line_spacing = 1.2
     
     # 1. TIÊU ĐỀ
-    head = doc.add_heading(f'KẾ HOẠCH BÀI DẠY: {ten_bai.upper()}', 0)
+    head = doc.add_heading(f'ĐỀ THI: {MÔN.upper()}', 0)
     head.alignment = 1 
     for run in head.runs:
         run.font.name = 'Times New Roman'
@@ -190,8 +190,8 @@ st.markdown("""
 # --- 4. GIAO DIỆN CHÍNH ---
 st.markdown("""
 <div class="main-header">
-    <h1>📘 TRỢ LÝ SOẠN GIÁO ÁN TỰ ĐỘNG (NLS)</h1>
-    <p>Tác giả: Lù Seo Sần - Trường PTDTBT Tiểu học Bản Ngò - ĐT: 097 1986 343</p>
+    <h1>📘 TRỢ LÝ SOẠN TẠO ĐỀ THI (NLS)</h1>
+    <p>Tác giả: Nguyễn Chí Công - Trường Tiểu học Nà Chì - ĐT: 0915 576 880</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -232,11 +232,12 @@ if uploaded_files:
             with cols[i%3]: st.info(f"📄 {f.name}")
 
 # 2. THÔNG TIN
-st.markdown('<div class="section-header">📝 2. THÔNG TIN BÀI DẠY</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-header">📝 2. THÔNG TIN ĐỀ THI</div>', unsafe_allow_html=True)
 
-c1, c2 = st.columns(2)
+c1, c2,3 = st.columns(2)
 with c1: lop = st.text_input("📚 Lớp:", "Lớp 4")
-with c2: ten_bai = st.text_input("📌 Tên bài học:", placeholder="Ví dụ: Học hát bài...")
+with c2: MON = st.text_input("📌 Môn:", placeholder="Ví dụ: Tiếng Việt...")
+with c3: Hoc_Ky = st.text_input("📌 Học kì:", placeholder="Ví dụ: Học kì I...")
 
 noidung_bosung = st.text_area("✍️ Ghi chú thêm (nội dung/kiến thức):", height=100)
 yeu_cau_them = st.text_input("💡 Yêu cầu đặc biệt:", placeholder="Ví dụ: Tích hợp trò chơi khởi động...")
@@ -254,7 +255,7 @@ if st.button("🚀 SOẠN GIÁO ÁN NGAY"):
                 # --- PROMPT CHI TIẾT CỦA THẦY (BẢN GỐC ĐẦY ĐỦ) ---
                 prompt_instruction = f"""
                 Đóng vai là một Giáo viên Tiểu học giỏi, am hiểu chương trình GDPT 2018.
-                Nhiệm vụ: Soạn Kế hoạch bài dạy (Giáo án) cho bài: "{ten_bai}" - {lop}.
+                Nhiệm vụ: Tạo 2 đề thi (Đề thi) cho môn: "{Môn}" - {lop} - {Hoc_ki}.
 
                 DỮ LIỆU ĐẦU VÀO:
                 - (Nếu có) File PDF Khung năng lực số đính kèm: Hãy dùng để đối chiếu nội dung bài học và đưa vào mục Năng lực số.
